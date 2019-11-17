@@ -7,6 +7,7 @@ declare NO_OF_ROW_COLUMNS=3;
 declare BOARD_SIZE=$(($NO_OF_ROW_COLUMNS * $NO_OF_ROW_COLUMNS))
 declare PLAYER
 declare COMPUTER
+declare startGameFlag=0;
 
 #declaring varibles
 
@@ -14,8 +15,7 @@ declare COMPUTER
 #declaring directories
 declare -a boardOfTicTacToe
 
-function letterAssignment()
-{
+function letterAssignment(){
 	random=$((RANDOM%2))
 	if [ $random == 1 ]
 	then
@@ -28,7 +28,6 @@ function letterAssignment()
          echo "PLAYER had assigned "$PLAYER
 	fi
 }
-
 function resetTheBoard()
 {
 	letterAssignment
@@ -38,5 +37,17 @@ function resetTheBoard()
  	done
 }
 
+function whoPlayFirst(){
+ 	local toss=$((RANDOM%2))
+   if [ $toss == 1 ]
+   then
+		echo "PLAYER play first"
+   else
+		echo "COMPUTER play first"
+   fi
+}
+
+whoPlayFirst
 resetTheBoard
+
 echo ${boardOfTicTacToe[@]}
