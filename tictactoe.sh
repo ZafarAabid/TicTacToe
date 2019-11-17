@@ -10,10 +10,12 @@ declare COMPUTER
 declare startGameFlag=0;
 
 #declaring varibles
-
+declare isPlayerTurn=1;
 
 #declaring directories
 declare -a ticTacToeBoard
+declare -a allPositions
+
 
 function letterAssignment(){
 	random=$((RANDOM%2))
@@ -42,8 +44,10 @@ function whoPlayFirst(){
    if [ $toss == 1 ]
    then
 		echo "PLAYER play first"
+		isPlayerTurn=1;
    else
 		echo "COMPUTER play first"
+		isPlayerTurn=0
    fi
 }
 
@@ -59,7 +63,65 @@ echo ""
    echo "    '---'---'---'"
 echo ""
 }
+
+function checkValidPosition(){
+			local isValidPosition=true;
+			local getPosition=$1;
+			if [[ $getPosition -ge 1 ]] && [[ $getPosition -le 9 ]]
+			then
+					for position in ${allPositions[@]};
+					do
+							if [ $getPosition -eq $position ]
+							then
+									isValidPosition=false;
+							fi
+					done
+
+			else
+					echo  "position out of range"
+					choosePosition $2
+
+			fi
+
+		echo $isValidPosition
+}
+function choosePosition(){
+	local positionSymbol=$1
+	
+	read -p "choose position" position
+	allow="$(checkValidPosition $position $positionSymbol )"
+	if [ $allow = true ]
+	then
+			ticTacToeBoard[$position]=$positionSymbol
+			allPositions+=($position)
+			echo ${allPositions[@]}
+			displayBoard
+	else
+			echo "place is already occupied,reselect position"
+			choosePosition $positionSymbol
+	fi
+}
+
+function playGame(){
+local noOneWins=true;
+	while [ $noOneWins ]
+	do
+
+		if [ $isPlayerTurn -eq 1 ]
+		then
+				echo "player"
+				choosePosition $PLAYER
+				isPlayerTurn=0
+		else
+				 echo "COMPUTER"
+				choosePosition $COMPUTER
+				isPlayerTurn=1
+		fi
+	done
+}
+
 whoPlayFirst
 resetTheBoard
 displayBoard
+playGame
 echo ""
