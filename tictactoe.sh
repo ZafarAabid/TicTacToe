@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 echo "----welcome----"
 
@@ -13,7 +13,7 @@ declare startGameFlag=0;
 
 
 #declaring directories
-declare -a boardOfTicTacToe
+declare -a ticTacToeBoard
 
 function letterAssignment(){
 	random=$((RANDOM%2))
@@ -33,7 +33,7 @@ function resetTheBoard()
 	letterAssignment
  	for (( places=1; places <=$BOARD_SIZE; places++ ))
  	do
- 		  boardOfTicTacToe[$places]="-";
+ 		  ticTacToeBoard[$places]="$places";
  	done
 }
 
@@ -47,7 +47,19 @@ function whoPlayFirst(){
    fi
 }
 
+function displayBoard()
+{
+echo ""
+	echo "    .---.---.---."
+   echo "    | "${ticTacToeBoard[1]}" | "${ticTacToeBoard[2]}" | "${ticTacToeBoard[3]}" |"
+   echo "    |---|---|---|"
+   echo "    | "${ticTacToeBoard[4]}" | "${ticTacToeBoard[5]}" | "${ticTacToeBoard[6]}" |"
+   echo "    |---|---|---|"
+   echo "    | "${ticTacToeBoard[7]}" | "${ticTacToeBoard[8]}" | "${ticTacToeBoard[9]}" |"
+   echo "    '---'---'---'"
+echo ""
+}
 whoPlayFirst
 resetTheBoard
-
-echo ${boardOfTicTacToe[@]}
+displayBoard
+echo ""
