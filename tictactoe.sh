@@ -11,7 +11,7 @@ declare startGameFlag=0;
 
 #declaring varibles
 declare isPlayerTurn=1;
-
+declare noOneWins=true;
 #declaring directories
 declare -a ticTacToeBoard
 declare -a allPositions
@@ -64,58 +64,74 @@ echo ""
 echo ""
 }
 
+function isPlayerWin(){
+	local winingStreak="";
+	local columncounter=0;
+	for (( columnToCheck=1; columnToCheck <= $NO_OF_ROW_COLUMNS; columnToCheck++ ))
+	do
+		columncounter=$columnToCheck
+		winingStreak+=${ticTacToeBoard[$columncounter]}
+		for (( fieldToCheck=1; fieldToCheck < $NO_OF_ROW_COLUMNS; fieldToCheck++ ))
+		do
+			columncounter=$(( $columncounter+$NO_OF_ROW_COLUMNS ))
+			winingStreak+=${ticTacToeBoard[$columncounter]}
+		done
+		if [[ $winingStreak == 'XXX' ]] || [[ $winingStreak == 'OOO' ]]
+		then
+			break;
+		else
+			winingStreak=""
+                 fi
+	done
+	
+	echo $winingStreak
+}
+
 function checkValidPosition(){
-			local isValidPosition=true;
-			local getPosition=$1;
-			if [[ $getPosition -ge 1 ]] && [[ $getPosition -le 9 ]]
-			then
-					for position in ${allPositions[@]};
-					do
-							if [ $getPosition -eq $position ]
-							then
-									isValidPosition=false;
-							fi
-					done
-
-			else
-					echo  "position out of range"
-					choosePosition $2
-
-			fi
-
-		echo $isValidPosition
+	local isValidPosition=true;
+	for position in ${allPositions[@]};
+	do
+		if [ $1 -eq $position ]
+		then
+			isValidPosition=false;
+		fi
+	done
+	echo $isValidPosition
 }
 function choosePosition(){
-	local positionSymbol=$1
-	
-	read -p "choose position" position
+
 	allow="$(checkValidPosition $position $positionSymbol )"
 	if [ $allow = true ]
 	then
-			ticTacToeBoard[$position]=$positionSymbol
-			allPositions+=($position)
+			ticTacToeBoard[$1]=$2
+			allPositions+=($1)
 			echo ${allPositions[@]}
 			displayBoard
 	else
 			echo "place is already occupied,reselect position"
-			choosePosition $positionSymbol
+			playGame
 	fi
 }
 
 function playGame(){
-local noOneWins=true;
 	while [ $noOneWins ]
 	do
-
-		if [ $isPlayerTurn -eq 1 ]
+		local isValidPosition=true;
+		read -p "choose position" position
+		if [[ $position -ge 1 ]] && [[ $position -le 9 ]]
 		then
-				echo "player"
-				choosePosition $PLAYER
-				isPlayerTurn=0
+			echo "player"
+			choosePosition $position $PLAYER
+			playerWon="$(isPlayerWin)"
+			if [[ $playerWon == "XXX" ]] || [[ $playerWon == "OOO" ]]
+			then
+				noOneWins=false;
+				echo "PLAYER HAS WON"
+				break;
+			fi
 		else
-				 echo "COMPUTER"
-				choosePosition $COMPUTER
-				isPlayerTurn=1
+			echo "position out of range, re-enter"
+			playGame	
 		fi
 	done
 }
