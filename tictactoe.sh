@@ -10,10 +10,12 @@ declare COMPUTER
 declare startGameFlag=0;
 
 #declaring varibles
-
-
+declare isPlayerTurn=1;
+declare noOneWins=true;
 #declaring directories
 declare -a ticTacToeBoard
+declare -a allPositions
+
 
 function letterAssignment(){
 	random=$((RANDOM%2))
@@ -42,8 +44,10 @@ function whoPlayFirst(){
    if [ $toss == 1 ]
    then
 		echo "PLAYER play first"
+		isPlayerTurn=1;
    else
 		echo "COMPUTER play first"
+		isPlayerTurn=0
    fi
 }
 
@@ -59,7 +63,79 @@ echo ""
    echo "    '---'---'---'"
 echo ""
 }
+
+function isPlayerWin(){
+	local winingStreak="";
+	local columncounter=0;
+	for (( columnToCheck=1; columnToCheck <= $NO_OF_ROW_COLUMNS; columnToCheck++ ))
+	do
+		columncounter=$columnToCheck
+		winingStreak+=${ticTacToeBoard[$columncounter]}
+		for (( fieldToCheck=1; fieldToCheck < $NO_OF_ROW_COLUMNS; fieldToCheck++ ))
+		do
+			columncounter=$(( $columncounter+$NO_OF_ROW_COLUMNS ))
+			winingStreak+=${ticTacToeBoard[$columncounter]}
+		done
+	if [[ $winingStreak -eq "XXX" ]] || [[ $winingStreak -eq "OOO" ]]
+	then
+		break;
+	fi
+	done
+	
+	echo $winingStreak
+}
+
+function checkValidPosition(){
+	local isValidPosition=true;
+	for position in ${allPositions[@]};
+	do
+		if [ $1 -eq $position ]
+		then
+			isValidPosition=false;
+		fi
+	done
+	echo $isValidPosition
+}
+function choosePosition(){
+
+	allow="$(checkValidPosition $position $positionSymbol )"
+	if [ $allow = true ]
+	then
+			ticTacToeBoard[$1]=$2
+			allPositions+=($1)
+			echo ${allPositions[@]}
+			displayBoard
+	else
+			echo "place is already occupied,reselect position"
+			playGame
+	fi
+}
+
+function playGame(){
+	while [ $noOneWins ]
+	do
+		local isValidPosition=true;
+		read -p "choose position" position
+		if [[ $position -ge 1 ]] && [[ $position -le 9 ]]
+		then
+			echo "player"
+			choosePosition $position $PLAYER
+			playerWon="$(isPlayerWin)"
+			if [[ $playerWon == "XXX" ]] || [[ $playerWon == "OOO" ]]
+			then
+				noOneWins=false;
+				echo "PLAYER HAS WON"
+				break;
+			fi
+		else
+			echo "position out of range, re-enter"
+			playGame	
+		fi
+	done
+}
+
 whoPlayFirst
 resetTheBoard
 displayBoard
+playGame
 echo ""
