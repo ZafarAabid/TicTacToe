@@ -66,32 +66,49 @@ echo ""
 
 function isPlayerWin(){
 	local cloumnStreak="";
-	local columncounter=0;
-	local rowcounter=1
+	local columnCounter=0;
+	local rowCounter=1
+	local diagonalCounter=1
+	local antiDiagonalCounter=$NO_OF_ROW_COLUMNS
 	for (( columnToCheck=1; columnToCheck <= $NO_OF_ROW_COLUMNS; columnToCheck++ ))
 	do
-		columncounter=$columnToCheck
-		cloumnStreak+=${ticTacToeBoard[$columncounter]}
-		rowStreak+=${ticTacToeBoard[$rowcounter]}
+		columnCounter=$columnToCheck
+		cloumnStreak+=${ticTacToeBoard[$columnCounter]}
+		rowStreak+=${ticTacToeBoard[$rowCounter]}
+		diagonalStreak+=${ticTacToeBoard[$diagonalCounter]}
+		antiDiagonalStreak+=${ticTacToeBoard[$antiDiagonalCounter]}
 		for (( fieldToCheck=1; fieldToCheck < $NO_OF_ROW_COLUMNS; fieldToCheck++ ))
 		do
-			columncounter=$(( $columncounter+$NO_OF_ROW_COLUMNS ))
-			cloumnStreak+=${ticTacToeBoard[$columncounter]}
-			rowcounter=$(( $rowcounter+1 ))
-                        rowStreak+=${ticTacToeBoard[$rowcounter]}
+			columnCounter=$(( $columnCounter+$NO_OF_ROW_COLUMNS ))
+			cloumnStreak+=${ticTacToeBoard[$columnCounter]}
+			rowCounter=$(( $rowCounter+1 ))
+                        rowStreak+=${ticTacToeBoard[$rowCounter]}
+#####
+			diagonalCounter=$(( $diagonalCounter+$NO_OF_ROW_COLUMNS+1 ))
+                        diagonalStreak+=${ticTacToeBoard[$diagonalCounter]}
+#####
+			antiDiagonalCounter=$(( $antiDiagonalCounter+$NO_OF_ROW_COLUMNS-1 ))
+                        antiDiagonalStreak+=${ticTacToeBoard[$antiDiagonalCounter]}
+#####
+
 		done
-		if [[ $cloumnStreak == 'XXX' ]] || [[ $rowStreak == 'XXX' ]]
+		if [[ $cloumnStreak == 'XXX' ]] || [[ $rowStreak == 'XXX' ]] || [[ $diagonalStreak == 'XXX' ]] || [[ $antiDiagonalStreak == 'XXX' ]]
 		then
 			outputStreak='X'
 			break;
-		elif [[ $cloumnStreak == 'OOO' ]] || [[ $rowStreak == 'OOO' ]]
+		elif [[ $cloumnStreak == 'OOO' ]] || [[ $rowStreak == 'OOO' ]] || [[ $diagonalStreak == 'OOO' ]] || [[ $antiDiagonalStreak == 'OOO' ]]
 		then
 			outputStreak='O'
                         break;
+######
+
+######
 		else
-			rowcounter=$(($rowcounter+1))
+			rowCounter=$(($rowCounter+1))
 			rowStreak=""
 			cloumnStreak=""
+			diagonalStreak=""
+			antiDiagonalStreak=""
                fi
 	done
 	echo $outputStreak
