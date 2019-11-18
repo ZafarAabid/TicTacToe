@@ -4,30 +4,39 @@ echo "----welcome----"
 
 #declaring constants
 declare NO_OF_ROW_COLUMNS=3;
+#echo "Enter the row/column length "
+#read -p "" NO_OF_ROW_COLUMNS
 declare BOARD_SIZE=$(($NO_OF_ROW_COLUMNS * $NO_OF_ROW_COLUMNS))
-declare PLAYER
-declare COMPUTER
-declare startGameFlag=0;
 
 #declaring varibles
-declare isPlayerTurn=1;
+declare player
+declare computer
+declare Xpattern;
+declare Opattern;
+declare startGameFlag=0;
+declare isplayerTurn=1;
 declare noOneWins=true;
 #declaring directories
 declare -a ticTacToeBoard
 declare -a allPositions
 
 
+for (( patterngenerator=1; patterngenerator <= $NO_OF_ROW_COLUMNS; patterngenerator++))
+do
+	Xpattern+='X';
+	Opattern+='O'
+done
 function letterAssignment(){
 	random=$((RANDOM%2))
 	if [ $random == 1 ]
 	then
-			PLAYER="X"
-			COMPUTER="O"
-			echo "PLAYER had assigned "$PLAYER
+		player="X"
+		computer="O"
+		echo "player had assigned "$player
 	else
-         PLAYER="O"
-         COMPUTER="X"
-         echo "PLAYER had assigned "$PLAYER
+		player="O"
+        	computer="X"
+        	echo "player had assigned "$player
 	fi
 }
 function resetTheBoard()
@@ -35,7 +44,7 @@ function resetTheBoard()
 	letterAssignment
  	for (( places=1; places <=$BOARD_SIZE; places++ ))
  	do
- 		  ticTacToeBoard[$places]="$places";
+ 		  ticTacToeBoard[$places]='-';
  	done
 }
 
@@ -43,28 +52,65 @@ function whoPlayFirst(){
  	local toss=$((RANDOM%2))
    if [ $toss == 1 ]
    then
-		echo "PLAYER play first"
-		isPlayerTurn=1;
+		echo "player play first"
+		isplayerTurn=1;
    else
-		echo "COMPUTER play first"
-		isPlayerTurn=0
+		echo "computer play first"
+		isplayerTurn=0
    fi
 }
 
 function displayBoard()
 {
 echo ""
-	echo "    .---.---.---."
-   echo "    | "${ticTacToeBoard[1]}" | "${ticTacToeBoard[2]}" | "${ticTacToeBoard[3]}" |"
-   echo "    |---|---|---|"
-   echo "    | "${ticTacToeBoard[4]}" | "${ticTacToeBoard[5]}" | "${ticTacToeBoard[6]}" |"
-   echo "    |---|---|---|"
-   echo "    | "${ticTacToeBoard[7]}" | "${ticTacToeBoard[8]}" | "${ticTacToeBoard[9]}" |"
-   echo "    '---'---'---'"
-echo ""
+	cellCount=1
+	for (( tableCell=1; tableCell <= $NO_OF_ROW_COLUMNS; tableCell++ ))
+	do
+		if [ $tableCell -eq 1 ]
+		then
+			for (( tableRows=1; tableRows<=$NO_OF_ROW_COLUMNS; tableRows++ ))
+			do
+			echo  -n ".---"
+			done
+		echo "."
+		fi
+		if [[ $tableCell -gt 1 ]] || [[ $tableCell -lt $NO_OF_ROW_COLUMNS ]]
+                then
+                        for (( tableRows=1; tableRows<=$NO_OF_ROW_COLUMNS; tableRows++ ))
+                        do
+				if [ $cellCount -le 9 ]
+				then
+					echo -n "| ${ticTacToeBoard[$cellCount]} "
+					cellCount=$(($cellCount+1))
+				else
+					echo  -n "| ${ticTacToeBoard[$cellCount]} "
+					cellCount=$(($cellCount+1))
+				fi
+                        done
+                echo   "|"
+                fi
+		if [ $tableCell -lt $NO_OF_ROW_COLUMNS ]
+		then
+			for (( i=1; i<=$NO_OF_ROW_COLUMNS; i++ ))
+			do
+	        		echo -n "|---"
+                	done
+			echo -n "|"
+			echo " "
+		fi
+		if [ $tableCell -eq $NO_OF_ROW_COLUMNS ]
+                then
+                        for (( tableRows=1; tableRows<=$NO_OF_ROW_COLUMNS; tableRows++ ))
+                        do
+ 	              	         echo  -n "'---"
+                        done
+               echo "'"
+               fi
+	done
+	echo ""
 }
 
-function isPlayerWin(){
+function isplayerWin(){
 	local cloumnStreak="";
 	local columnCounter=0;
 	local rowCounter=1
@@ -74,7 +120,7 @@ function isPlayerWin(){
 	do
 		columnCounter=$columnToCheck
 		cloumnStreak+=${ticTacToeBoard[$columnCounter]}
-		rowStreak+=${ticTacToeBoard[$rowCounter]}
+		            rowStreak+=${ticTacToeBoard[$rowCounter]}
 		diagonalStreak+=${ticTacToeBoard[$diagonalCounter]}
 		antiDiagonalStreak+=${ticTacToeBoard[$antiDiagonalCounter]}
 		for (( fieldToCheck=1; fieldToCheck < $NO_OF_ROW_COLUMNS; fieldToCheck++ ))
@@ -92,11 +138,11 @@ function isPlayerWin(){
 #####
 
 		done
-		if [[ $cloumnStreak == 'XXX' ]] || [[ $rowStreak == 'XXX' ]] || [[ $diagonalStreak == 'XXX' ]] || [[ $antiDiagonalStreak == 'XXX' ]]
+		if [[ $cloumnStreak == $Xpattern ]] || [[ $rowStreak == $Xpattern ]] || [[ $diagonalStreak == $Xpattern ]] || [[ $antiDiagonalStreak == $Xpattern ]]
 		then
 			outputStreak='X'
 			break;
-		elif [[ $cloumnStreak == 'OOO' ]] || [[ $rowStreak == 'OOO' ]] || [[ $diagonalStreak == 'OOO' ]] || [[ $antiDiagonalStreak == 'OOO' ]]
+		elif [[ $cloumnStreak == $Opattern ]] || [[ $rowStreak == $Opattern ]] || [[ $diagonalStreak == $Opattern ]] || [[ $antiDiagonalStreak == $Opattern ]]
 		then
 			outputStreak='O'
                         break;
@@ -145,15 +191,15 @@ function playGame(){
 	do
 		local isValidPosition=true;
 		read -p "choose position" position
-		if [[ $position -ge 1 ]] && [[ $position -le 9 ]]
+		if [[ $position -ge 1 ]] && [[ $position -le $BOARD_SIZE ]]
 		then
 			echo "player"
-			choosePosition $position $PLAYER
-			playerWon="$(isPlayerWin)"
+			choosePosition $position $player
+			playerWon="$(isplayerWin)"
 			if [[ $playerWon == "X" ]] || [[ $playerWon == "O" ]]
 			then
 				noOneWins=false;
-				echo "PLAYER HAS WON"
+				echo "player HAS WON"
 				break;
 			fi
 		else
@@ -163,7 +209,7 @@ function playGame(){
 	done
 }
 
-whoPlayFirst
+#whoPlayFirst
 resetTheBoard
 displayBoard
 playGame
