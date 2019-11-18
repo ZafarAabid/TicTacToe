@@ -20,7 +20,6 @@ declare noOneWins=true;
 declare -a ticTacToeBoard
 declare -a allPositions
 
-
 for (( patterngenerator=1; patterngenerator <= $NO_OF_ROW_COLUMNS; patterngenerator++))
 do
 	Xpattern+='X';
@@ -109,8 +108,8 @@ echo ""
 	done
 	echo ""
 }
-
 function isplayerWin(){
+	local outputStreak="";
 	local cloumnStreak="";
 	local columnCounter=0;
 	local rowCounter=1
@@ -129,14 +128,10 @@ function isplayerWin(){
 			cloumnStreak+=${ticTacToeBoard[$columnCounter]}
 			rowCounter=$(( $rowCounter+1 ))
                         rowStreak+=${ticTacToeBoard[$rowCounter]}
-#####
 			diagonalCounter=$(( $diagonalCounter+$NO_OF_ROW_COLUMNS+1 ))
                         diagonalStreak+=${ticTacToeBoard[$diagonalCounter]}
-#####
 			antiDiagonalCounter=$(( $antiDiagonalCounter+$NO_OF_ROW_COLUMNS-1 ))
                         antiDiagonalStreak+=${ticTacToeBoard[$antiDiagonalCounter]}
-#####
-
 		done
 		if [[ $cloumnStreak == $Xpattern ]] || [[ $rowStreak == $Xpattern ]] || [[ $diagonalStreak == $Xpattern ]] || [[ $antiDiagonalStreak == $Xpattern ]]
 		then
@@ -146,15 +141,13 @@ function isplayerWin(){
 		then
 			outputStreak='O'
                         break;
-######
-
-######
 		else
 			rowCounter=$(($rowCounter+1))
 			rowStreak=""
 			cloumnStreak=""
 			diagonalStreak=""
 			antiDiagonalStreak=""
+			outputStreak="-"
                fi
 	done
 	echo $outputStreak
@@ -181,35 +174,71 @@ function choosePosition(){
 			echo ${allPositions[@]}
 			displayBoard
 	else
+			if [ $player = $2 ]
+			then
 			echo "place is already occupied,reselect position"
+			fi
 			playGame
 	fi
 }
+#function (){
+
+#}
 
 function playGame(){
+
 	while [ $noOneWins ]
 	do
-		local isValidPosition=true;
-		read -p "choose position" position
-		if [[ $position -ge 1 ]] && [[ $position -le $BOARD_SIZE ]]
+		if [ $isplayerTurn = 1 ]
 		then
-			echo "player"
-			choosePosition $position $player
-			playerWon="$(isplayerWin)"
-			if [[ $playerWon == "X" ]] || [[ $playerWon == "O" ]]
+			local isValidPosition=true;
+			read -p "choose position" position
+			if [[ $position -ge 1 ]] && [[ $position -le $BOARD_SIZE ]]
 			then
-				noOneWins=false;
-				echo "player HAS WON"
-				break;
+				echo "player"
+				choosePosition $position $player
+				playerWon="$(isplayerWin)"
+				if [ $playerWon == $player ]
+				then
+					echo "player HAS WON";
+					noOneWins=false;
+					break
+					break
+					break
+                                        break
+
+				fi
+			else
+					echo "position out of range, re-enter"
+					playGame
 			fi
+			isplayerTurn=0
+			
 		else
-			echo "position out of range, re-enter"
-			playGame	
+			local isValidPosition=true;
+                        position=$(( RANDOM % $BOARD_SIZE +1))
+                        if [[ $position -ge 1 ]] && [[ $position -le $BOARD_SIZE ]]
+                        then
+                                echo "COMPUTER"
+                                choosePosition $position $computer
+                                playerWon="$(isplayerWin)"
+                                if [ $playerWon == $computer ]
+                                then
+                                        noOneWins=false;
+                                        echo "COMPUTER HAS WON"
+                                        break
+					break
+                                        break
+                                fi
+                        else
+                                playGame
+                        fi
+                        isplayerTurn=1
 		fi
 	done
 }
 
-#whoPlayFirst
+whoPlayFirst
 resetTheBoard
 displayBoard
 playGame
