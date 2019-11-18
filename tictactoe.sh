@@ -76,10 +76,12 @@ function isPlayerWin(){
 			columncounter=$(( $columncounter+$NO_OF_ROW_COLUMNS ))
 			winingStreak+=${ticTacToeBoard[$columncounter]}
 		done
-	if [[ $winingStreak -eq "XXX" ]] || [[ $winingStreak -eq "OOO" ]]
-	then
-		break;
-	fi
+		if [[ $winingStreak == "XXX" ]] || [[ $winingStreak == "OOO" ]]
+		then
+			break;
+		else
+			winingStreak=""
+                 fi
 	done
 	
 	echo $winingStreak
