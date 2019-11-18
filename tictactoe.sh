@@ -65,26 +65,36 @@ echo ""
 }
 
 function isPlayerWin(){
-	local winingStreak="";
+	local cloumnStreak="";
 	local columncounter=0;
+	local rowcounter=1
 	for (( columnToCheck=1; columnToCheck <= $NO_OF_ROW_COLUMNS; columnToCheck++ ))
 	do
 		columncounter=$columnToCheck
-		winingStreak+=${ticTacToeBoard[$columncounter]}
+		cloumnStreak+=${ticTacToeBoard[$columncounter]}
+		rowStreak+=${ticTacToeBoard[$rowcounter]}
 		for (( fieldToCheck=1; fieldToCheck < $NO_OF_ROW_COLUMNS; fieldToCheck++ ))
 		do
 			columncounter=$(( $columncounter+$NO_OF_ROW_COLUMNS ))
-			winingStreak+=${ticTacToeBoard[$columncounter]}
+			cloumnStreak+=${ticTacToeBoard[$columncounter]}
+			rowcounter=$(( $rowcounter+1 ))
+                        rowStreak+=${ticTacToeBoard[$rowcounter]}
 		done
-		if [[ $winingStreak == 'XXX' ]] || [[ $winingStreak == 'OOO' ]]
+		if [[ $cloumnStreak == 'XXX' ]] || [[ $rowStreak == 'XXX' ]]
 		then
+			outputStreak='X'
 			break;
+		elif [[ $cloumnStreak == 'OOO' ]] || [[ $rowStreak == 'OOO' ]]
+		then
+			outputStreak='O'
+                        break;
 		else
-			winingStreak=""
-                 fi
+			rowcounter=$(($rowcounter+1))
+			rowStreak=""
+			cloumnStreak=""
+               fi
 	done
-	
-	echo $winingStreak
+	echo $outputStreak
 }
 
 function checkValidPosition(){
@@ -123,7 +133,7 @@ function playGame(){
 			echo "player"
 			choosePosition $position $PLAYER
 			playerWon="$(isPlayerWin)"
-			if [[ $playerWon == "XXX" ]] || [[ $playerWon == "OOO" ]]
+			if [[ $playerWon == "X" ]] || [[ $playerWon == "O" ]]
 			then
 				noOneWins=false;
 				echo "PLAYER HAS WON"
