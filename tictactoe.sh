@@ -1,5 +1,4 @@
 #!/bin/bash
-
 echo "----welcome----"
 
 #declaring constants
@@ -16,6 +15,7 @@ declare Opattern;
 declare startGameFlag=0;
 declare isplayerTurn=1;
 declare noOneWins=true;
+
 #declaring directories
 declare -a ticTacToeBoard
 declare -a allPositions
@@ -25,6 +25,7 @@ do
 	Xpattern+='X';
 	Opattern+='O'
 done
+
 function letterAssignment(){
 	random=$((RANDOM%2))
 	if [ $random == 1 ]
@@ -46,7 +47,6 @@ function resetTheBoard()
  		  ticTacToeBoard[$places]='-';
  	done
 }
-
 function whoPlayFirst(){
  	local toss=$((RANDOM%2))
    if [ $toss == 1 ]
@@ -58,10 +58,10 @@ function whoPlayFirst(){
 		isplayerTurn=0
    fi
 }
-
 function displayBoard()
 {
 echo ""
+	showSymbols=1
 	cellCount=1
 	for (( tableCell=1; tableCell <= $NO_OF_ROW_COLUMNS; tableCell++ ))
 	do
@@ -95,6 +95,16 @@ echo ""
 	        		echo -n "|---"
                 	done
 			echo -n "|"
+			if [ $showSymbols = 2 ]
+                        then
+                                echo -n "    COMPUTER : "$computer
+                                showSymbols=$(($showSymbols+1))
+                        fi
+			if [ $showSymbols = 1 ]
+			then
+				echo -n "    PLAYER : "$player
+				showSymbols=$(($showSymbols+1))
+			fi
 			echo " "
 		fi
 		if [ $tableCell -eq $NO_OF_ROW_COLUMNS ]
@@ -108,7 +118,68 @@ echo ""
 	done
 	echo ""
 }
-function isplayerWin(){
+function doPositionMet(){
+	columnPositionCounter=0;
+	checkColumnPosition=0;
+	rowPositionCounter=0;
+        checkRowPosition=0;
+
+        for ((checklength=1; checklength <= $NO_OF_ROW_COLUMNS; checklength++))
+        do 
+        columns=1
+        asdf=$checklength
+                while [ $columns -le $NO_OF_ROW_COLUMNS ]
+                do
+                        if [ ${ticTacToeBoard[$asdf]} = $computer ]
+                        then
+                                rowPositionCounter=$(($rowPositionCounter+1))
+                        fi
+
+                        if [ ${ticTacToeBoard[$asdf]} != $computer -a ${ticTacToeBoard[$asdf]} != $player ]
+                        then
+                                checkRowPosition=$asdf
+                        fi
+                        columns=$(($columns+1))
+                        asdf=$(($asdf+$NO_OF_ROW_COLUMNS))
+                        if [[ $rowPositionCounter == $(($NO_OF_ROW_COLUMNS-1)) ]] && [[ ${ticTacToeBoard[$checkRowPosition]} == '-'  ]]
+                        then
+                                break
+                        fi
+                done
+        done
+	for (( columnToCheck=1; columnToCheck <= $BOARD_SIZE; columnToCheck++ ))
+	do
+		if ! [ $(($columnToCheck % $(($NO_OF_ROW_COLUMNS)) )) -eq 0 ]
+		then
+			columnPosition=$(($columnToCheck+$NO_OF_ROW_COLUMNS))
+			if [[ ${ticTacToeBoard[$columnToCheck]} = $computer ]]
+                     	then
+				columnPositionCounter=$(($columnPositionCounter+1))
+			elif [ ${ticTacToeBoard[$columnToCheck]} = '-'  -a ticTacToeBoard[$columnToCheck]} != $player ]
+                        then
+                                checkColumnPosition=$columnToCheck ;
+			elif [[ $columnPositionCounter -eq $(( $NO_OF_ROW_COLUMNS-1 )) ]] && [[ ${ticTacToeBoard[$checkColumnPosition]} = '-' ]]
+                       then
+                                columnPositionCounter=$(($NO_OF_ROW_COLUMNS-1))
+                                break
+                        fi
+		else
+			if [ ${ticTacToeBoard[$columnToCheck]} = $computer ]
+                        then
+                                columnPositionCounter=$(($columnPositionCounter+1))
+       			elif  [ ${ticTacToeBoard[$columnToCheck]} = '-' ]
+                       then
+	                        checkColumnPosition=$columnToCheck ;
+		        elif [[ $columnPositionCounter -eq $(( $NO_OF_ROW_COLUMNS-1 )) ]] && [[ ${ticTacToeBoard[$checkColumnPosition]} = '-' ]]
+                      	then
+			columnPositionCounter=$(($NO_OF_ROW_COLUMNS-1))
+                                break
+                      fi
+		fi
+	done
+}
+function isplayerWin()
+{
 	local outputStreak="";
 	local cloumnStreak="";
 	local columnCounter=0;
@@ -181,10 +252,6 @@ function choosePosition(){
 			playGame
 	fi
 }
-#function (){
-
-#}
-
 function playGame(){
 
 	while [ $noOneWins ]
@@ -192,6 +259,7 @@ function playGame(){
 		if [ $isplayerTurn = 1 ]
 		then
 			local isValidPosition=true;
+			echo "player's turn "
 			read -p "choose position" position
 			if [[ $position -ge 1 ]] && [[ $position -le $BOARD_SIZE ]]
 			then
@@ -203,20 +271,39 @@ function playGame(){
 					echo "player HAS WON";
 					noOneWins=false;
 					break
-					break
-					break
-                                        break
-
 				fi
+			elif [ $position -eq 0 ]
+			then
+				echo " 0 position is not availabe"
+                                playGame
+
 			else
-					echo "position out of range, re-enter"
-					playGame
+				echo "position out of range, re-enter"
+				playGame
 			fi
-			isplayerTurn=0
-			
+			if [ ${#allPositions[@]} -lt $BOARD_SIZE ]
+                        then
+                                isplayerTurn=0
+                        else
+                                echo "matchDraw"
+                                isplayerTurn=2
+                                break
+                        fi
 		else
 			local isValidPosition=true;
-                        position=$(( RANDOM % $BOARD_SIZE +1))
+			echo "computer's turn"
+			doPositionMet
+			echo $columnPositionCounter
+			if [ $columnPositionCounter -eq $(($NO_OF_ROW_COLUMNS-1)) -a ${ticTacToeBoard[$checkColumnPosition]} = '-' ]
+			then
+				position=$checkColumnPosition
+			elif [ $rowPositionCounter = $(($NO_OF_ROW_COLUMNS-1)) -a ${ticTacToeBoard[$checkRowPosition]} = '-' ]
+			then
+				position=$checkRowPosition
+			else
+#				read -p "enter computer spot " position
+				position=$(( RANDOM % $BOARD_SIZE +1))
+			fi
                         if [[ $position -ge 1 ]] && [[ $position -le $BOARD_SIZE ]]
                         then
                                 echo "COMPUTER"
@@ -227,15 +314,22 @@ function playGame(){
                                         noOneWins=false;
                                         echo "COMPUTER HAS WON"
                                         break
-					break
-                                        break
                                 fi
                         else
                                 playGame
                         fi
-                        isplayerTurn=1
+#                        isplayerTurn=1
+			if [ ${#allPositions[@]} -lt $BOARD_SIZE ]
+			then
+				isplayerTurn=1
+			else
+				echo "matchDraw"
+				isplayerTurn=2
+				break
+			fi
 		fi
 	done
+
 }
 
 whoPlayFirst
