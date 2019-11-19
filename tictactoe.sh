@@ -178,8 +178,7 @@ function doPositionMet(){
 		fi
 	done
 }
-function isplayerWin()
-{
+function isplayerWin(){
 	local outputStreak="";
 	local cloumnStreak="";
 	local columnCounter=0;
@@ -223,7 +222,6 @@ function isplayerWin()
 	done
 	echo $outputStreak
 }
-
 function checkValidPosition(){
 	local isValidPosition=true;
 	for position in ${allPositions[@]};
@@ -253,7 +251,6 @@ function choosePosition(){
 	fi
 }
 function playGame(){
-
 	while [ $noOneWins ]
 	do
 		if [ $isplayerTurn = 1 ]
@@ -318,7 +315,6 @@ function playGame(){
                         else
                                 playGame
                         fi
-#                        isplayerTurn=1
 			if [ ${#allPositions[@]} -lt $BOARD_SIZE ]
 			then
 				isplayerTurn=1
@@ -329,11 +325,8 @@ function playGame(){
 			fi
 		fi
 	done
-
 }
-
 whoPlayFirst
 resetTheBoard
 displayBoard
 playGame
-echo ""
