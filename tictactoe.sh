@@ -264,7 +264,6 @@ function choosePosition(){
 	fi
 }
 function blockColumn(){
-
  columnBlockPosition=0
         if [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[4]} = $player -a "${ticTacToeBoard[7]}" = "-" ]
         then
@@ -317,7 +316,6 @@ function blockRow(){
         elif [ ${ticTacToeBoard[4]} = $player -a ${ticTacToeBoard[6]} = $player  -a "${ticTacToeBoard[5]}" = '-' ]
         then 
                 rowBlockPosition=5;
-                break
         elif [ ${ticTacToeBoard[5]} = $player -a ${ticTacToeBoard[6]} = $player  -a "${ticTacToeBoard[4]}" = '-' ]
         then 
                 rowBlockPosition=4;
