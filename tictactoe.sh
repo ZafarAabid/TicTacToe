@@ -393,7 +393,7 @@ function playGame(){
                         fi
 		else
 			local isValidPosition=true;
-			echo "COMPUTER is thinking"
+#			echo "COMPUTER is thinking"
 			sleep 1
 			doPositionMet
 			blockColumn
