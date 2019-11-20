@@ -132,6 +132,21 @@ local myPosition
 
 echo $myPosition
 }
+
+function chooseSides(){
+local chooseSide=0
+local selectCell=0
+	while [ $selectCell -lt $BOARD_SIZE ]
+	do
+		selectCell=$(($selectCell+$(($NO_OF_ROW_COLUMNS-1)) ))
+		if [ ${ticTacToeBoard[$selectCell]} = "-" ]
+		then
+			chooseSide=$selectCell
+		fi
+	done
+	echo $chooseSide
+}
+
 function doPositionMet(){
 	columnPositionCounter=0;
 	checkColumnPosition=0;
@@ -399,6 +414,7 @@ function playGame(){
 			blockColumn
 			blockRow
 			blockdiagonal
+			chooseSide="$(chooseSides)"
                          if [ $diagonalBlockPosition != "0" ]
                          then
                                  position=$diagonalBlockPosition
@@ -414,6 +430,10 @@ function playGame(){
 			elif [ ${ticTacToeBoard[5]} = '-' ]
 			then
 				position=5
+			elif [ ${ticTacToeBoard[$chooseSide]} = '-' ]
+                        then
+                                position=$chooseSide
+
 			else
 				position=$(( RANDOM % $BOARD_SIZE +1))
 			fi
