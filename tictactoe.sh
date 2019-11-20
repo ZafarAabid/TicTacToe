@@ -3,8 +3,6 @@ echo "----welcome----"
 
 #declaring constants
 declare NO_OF_ROW_COLUMNS=3;
-#echo "Enter the row/column length "
-#read -p "" NO_OF_ROW_COLUMNS
 declare BOARD_SIZE=$(($NO_OF_ROW_COLUMNS * $NO_OF_ROW_COLUMNS))
 
 #declaring varibles
