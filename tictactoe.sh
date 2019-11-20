@@ -401,6 +401,7 @@ function playGame(){
 		else
 			local isValidPosition=true;
 			echo "computer's turn"
+			sleep 1
 			doPositionMet
 			blockColumn
 			blockRow
@@ -417,12 +418,16 @@ function playGame(){
                          then
 				echo "ROWB"
                                  position=$rowBlockPosition
-			elif [[ ${ticTacToeBoard[1]} = '-' ]] || [[ ${ticTacToeBoard[1]} = '-' ]] || [[ ${ticTacToeBoard[1]} = '-' ]] || [[ ${ticTacToeBoard[1]} = '-' ]]
+			elif [[ ${ticTacToeBoard[1]} = '-' ]] || [[ ${ticTacToeBoard[3]} = '-' ]] || [[ ${ticTacToeBoard[7]} = '-' ]] || [[ ${ticTacToeBoard[9]} = '-' ]]
 			then
 				position="$(chooseCorners)"
 				echo "CORNERS"
+			elif [ ${ticTacToeBoard[5]} = '-' ]
+			then
+				position=5
+                                echo "CENTER"
 			else
-				echo "RANDOM################"
+				echo "RANDOM"
 				position=$(( RANDOM % $BOARD_SIZE +1))
 			fi
                         if [[ $position -ge 1 ]] && [[ $position -le $BOARD_SIZE ]]
