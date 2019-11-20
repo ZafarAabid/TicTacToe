@@ -118,6 +118,22 @@ echo ""
 	done
 	echo ""
 }
+function chooseCorners(){
+local myPosition
+	myPosition=$((RANDOM%4))
+	case $myPosition in
+	0)
+		myPosition=1			;;
+	1)
+        	myPosition=3                    ;;
+	2)
+        	myPosition=7                    ;;
+	3)
+        	myPosition=9                    ;;
+	esac
+
+echo $myPosition
+}
 function doPositionMet(){
 	columnPositionCounter=0;
 	checkColumnPosition=0;
@@ -250,7 +266,8 @@ function choosePosition(){
 	fi
 }
 function blockColumn(){
- columnBlockPosition=0;
+
+ columnBlockPosition=0
         if [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[4]} = $player -a "${ticTacToeBoard[7]}" = "-" ]
         then
                 columnBlockPosition=7;
@@ -285,7 +302,7 @@ function blockColumn(){
         echo $columnBlockPosition
 }
 
-function blockColumn(){
+function blockRow(){
  rowBlockPosition=0;
         if [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[2]} = $player -a "${ticTacToeBoard[3]}" = "-" ]
         then
@@ -375,7 +392,7 @@ function playGame(){
 			if [ ${#allPositions[@]} -lt $BOARD_SIZE ]
                         then
                                 isplayerTurn=0
-                        elif [ ${#allPositions[@]} -ge $BOARD_SIZE -a $noOneWins = "false" ]
+                        elif [ ${#allPositions[@]} -ge $BOARD_SIZE -a $noOneWins = "true" ]
 			then
                                 echo "matchDraw"
                                 isplayerTurn=2
@@ -386,25 +403,26 @@ function playGame(){
 			echo "computer's turn"
 			doPositionMet
 			blockColumn
+			blockRow
 			blockdiagonal
-			echo $columnPositionCounter
-			if [ $columnPositionCounter -eq $(($NO_OF_ROW_COLUMNS-1)) -a ${ticTacToeBoard[$checkColumnPosition]} = '-' ]
-			then
-				position=$checkColumnPosition
-			elif [ $rowPositionCounter = $(($NO_OF_ROW_COLUMNS-1)) -a ${ticTacToeBoard[$checkRowPosition]} = '-' ]
-			then
-				position=$checkRowPosition
-                         elif [ $diagonalBlockPosition != 0 ]
+                         if [ $diagonalBlockPosition != "0" ]
                          then
+				echo "DIAGB" 
                                  position=$diagonalBlockPosition
-			elif [ $columnBlockPosition != 0 ]
+			elif [ $columnBlockPosition != "0" ]
                          then
+				echo "COLB" 
                                  position=$columnBlockPosition
-			elif [ $rowBlockPosition != 0 ]
+			elif [ $rowBlockPosition != "0" ]
                          then
+				echo "ROWB"
                                  position=$rowBlockPosition
+			elif [[ ${ticTacToeBoard[1]} = '-' ]] || [[ ${ticTacToeBoard[1]} = '-' ]] || [[ ${ticTacToeBoard[1]} = '-' ]] || [[ ${ticTacToeBoard[1]} = '-' ]]
+			then
+				position="$(chooseCorners)"
+				echo "CORNERS"
 			else
-#				read -p "enter computer spot " position
+				echo "RANDOM################"
 				position=$(( RANDOM % $BOARD_SIZE +1))
 			fi
                         if [[ $position -ge 1 ]] && [[ $position -le $BOARD_SIZE ]]
@@ -424,7 +442,7 @@ function playGame(){
 			if [ ${#allPositions[@]} -lt $BOARD_SIZE ]
 			then
 				isplayerTurn=1
-			elif [ ${#allPositions[@]} -ge $BOARD_SIZE -a $noOneWins = "false" ]
+			elif [ ${#allPositions[@]} -ge $BOARD_SIZE -a $noOneWins = "true" ]
 			then
 				echo "matchDraw"
 				isplayerTurn=2
