@@ -299,7 +299,6 @@ function blockColumn(){
         then 
                 columnBlockPosition=3;
         fi
-        echo $columnBlockPosition
 }
 
 function blockRow(){
@@ -335,7 +334,6 @@ function blockRow(){
         then 
                 rowBlockPosition=7;
         fi
-        echo $rowBlockPosition
 }
 function blockdiagonal() {
 	diagonalBlockPosition=0;
@@ -359,7 +357,6 @@ function blockdiagonal() {
         then 
                 diagonalBlockPosition=3;
         fi
-	echo $diagonalBlockPosition
 }
 function playGame(){
 	while [ $noOneWins ]
@@ -400,7 +397,7 @@ function playGame(){
                         fi
 		else
 			local isValidPosition=true;
-			echo "computer's turn"
+			echo "COMPUTER is thinking"
 			sleep 1
 			doPositionMet
 			blockColumn
@@ -408,31 +405,24 @@ function playGame(){
 			blockdiagonal
                          if [ $diagonalBlockPosition != "0" ]
                          then
-				echo "DIAGB" 
                                  position=$diagonalBlockPosition
 			elif [ $columnBlockPosition != "0" ]
                          then
-				echo "COLB" 
                                  position=$columnBlockPosition
 			elif [ $rowBlockPosition != "0" ]
                          then
-				echo "ROWB"
                                  position=$rowBlockPosition
 			elif [[ ${ticTacToeBoard[1]} = '-' ]] || [[ ${ticTacToeBoard[3]} = '-' ]] || [[ ${ticTacToeBoard[7]} = '-' ]] || [[ ${ticTacToeBoard[9]} = '-' ]]
 			then
 				position="$(chooseCorners)"
-				echo "CORNERS"
 			elif [ ${ticTacToeBoard[5]} = '-' ]
 			then
 				position=5
-                                echo "CENTER"
 			else
-				echo "RANDOM"
 				position=$(( RANDOM % $BOARD_SIZE +1))
 			fi
                         if [[ $position -ge 1 ]] && [[ $position -le $BOARD_SIZE ]]
                         then
-                                echo "COMPUTER"
                                 choosePosition $position $computer
                                 playerWon="$(isplayerWin)"
                                 if [ $playerWon == $computer ]
