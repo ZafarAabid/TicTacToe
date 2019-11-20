@@ -413,9 +413,6 @@ function playGame(){
 			elif [[ ${ticTacToeBoard[1]} = '-' ]] || [[ ${ticTacToeBoard[3]} = '-' ]] || [[ ${ticTacToeBoard[7]} = '-' ]] || [[ ${ticTacToeBoard[9]} = '-' ]]
 			then
 				position="$(chooseCorners)"
-			elif [ ${ticTacToeBoard[5]} = '-' ]
-			then
-				position=5
 			else
 				position=$(( RANDOM % $BOARD_SIZE +1))
 			fi
