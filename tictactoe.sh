@@ -250,6 +250,110 @@ function choosePosition(){
 			playGame
 	fi
 }
+function blockColumn(){
+ columnBlockPosition=0;
+        if [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[4]} = $player -a "${ticTacToeBoard[7]}" = "-" ]
+        then
+                columnBlockPosition=7;
+	 elif [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[7]} = $player -a "${ticTacToeBoard[4]}" = "-" ]
+        then
+                columnBlockPosition=4;
+        elif [ ${ticTacToeBoard[4]} = $player -a ${ticTacToeBoard[7]} = $player  -a "${ticTacToeBoard[1]}" = "-" ]
+	then
+                columnBlockPosition=1;
+        fi
+        if [ ${ticTacToeBoard[2]} = $player -a ${ticTacToeBoard[5]} = $player  -a "${ticTacToeBoard[8]}" = '-' ]
+        then 
+                columnBlockPosition=8;
+        elif [ ${ticTacToeBoard[2]} = $player -a ${ticTacToeBoard[8]} = $player  -a "${ticTacToeBoard[5]}" = '-' ]
+        then 
+                columnBlockPosition=5;
+                break
+        elif [ ${ticTacToeBoard[5]} = $player -a ${ticTacToeBoard[8]} = $player  -a "${ticTacToeBoard[2]}" = '-' ]
+        then 
+                columnBlockPosition=2;
+        fi
+	if [ ${ticTacToeBoard[3]} = $player -a ${ticTacToeBoard[6]} = $player  -a "${ticTacToeBoard[9]}" = '-' ]
+        then 
+                columnBlockPosition=9;
+        elif [ ${ticTacToeBoard[3]} = $player -a ${ticTacToeBoard[9]} = $player  -a "${ticTacToeBoard[6]}" = '-' ]
+        then 
+                columnBlockPosition=6;
+        elif [ ${ticTacToeBoard[6]} = $player -a ${ticTacToeBoard[9]} = $player  -a "${ticTacToeBoard[3]}" = '-' ]
+        then 
+                columnBlockPosition=3;
+        fi
+        echo $columnBlockPosition
+}
+
+function blockColumn(){
+ rowBlockPosition=0;
+        if [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[2]} = $player -a "${ticTacToeBoard[3]}" = "-" ]
+        then
+                rowBlockPosition=3;
+         elif [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[3]} = $player -a "${ticTacToeBoard[2]}" = "-" ]
+        then
+                rowBlockPosition=2;
+        elif [ ${ticTacToeBoard[2]} = $player -a ${ticTacToeBoard[3]} = $player  -a "${ticTacToeBoard[1]}" = "-" ]
+        then
+                rowBlockPosition=1;
+        fi
+        if [ ${ticTacToeBoard[4]} = $player -a ${ticTacToeBoard[5]} = $player  -a "${ticTacToeBoard[6]}" = '-' ]
+        then 
+                rowBlockPosition=6;
+        elif [ ${ticTacToeBoard[4]} = $player -a ${ticTacToeBoard[6]} = $player  -a "${ticTacToeBoard[5]}" = '-' ]
+        then 
+                rowBlockPosition=5;
+                break
+        elif [ ${ticTacToeBoard[5]} = $player -a ${ticTacToeBoard[6]} = $player  -a "${ticTacToeBoard[4]}" = '-' ]
+        then 
+                rowBlockPosition=4;
+        fi
+	if [ ${ticTacToeBoard[7]} = $player -a ${ticTacToeBoard[8]} = $player  -a "${ticTacToeBoard[9]}" = '-' ]
+        then 
+                rowBlockPosition=9;
+        elif [ ${ticTacToeBoard[7]} = $player -a ${ticTacToeBoard[9]} = $player  -a "${ticTacToeBoard[8]}" = '-' ]
+        then 
+                rowBlockPosition=8;
+        elif [ ${ticTacToeBoard[8]} = $player -a ${ticTacToeBoard[9]} = $player  -a "${ticTacToeBoard[7]}" = '-' ]
+        then 
+                rowBlockPosition=7;
+        fi
+        echo $rowBlockPosition
+}
+###################
+function blockdiagonal() {
+	diagonalBlockPosition=0;
+	if [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[5]} = $player -a "${ticTacToeBoard[9]}" = "-" ]
+	then
+		diagonalBlockPosition=9;
+
+	elif [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[9]} = $player -a "${ticTacToeBoard[5]}" = "-" ]
+        then
+                diagonalBlockPosition=5;
+
+	elif [ ${ticTacToeBoard[5]} = $player -a ${ticTacToeBoard[9]} = $player  -a "${ticTacToeBoard[1]}" = "-" ]
+        then 
+                diagonalBlockPosition=1;
+
+	fi
+
+	if [ ${ticTacToeBoard[3]} = $player -a ${ticTacToeBoard[5]} = $player  -a "${ticTacToeBoard[7]}" = "-" ]
+        then 
+                diagonalBlockPosition=7;
+        elif [ ${ticTacToeBoard[3]} = $player -a ${ticTacToeBoard[7]} = $player  -a "${ticTacToeBoard[5]}" = "-" ]
+        then 
+                diagonalBlockPosition=5;
+
+        elif [ ${ticTacToeBoard[5]} = $player -a ${ticTacToeBoard[7]} = $player  -a "${ticTacToeBoard[3]}" = "-" ]
+        then 
+                diagonalBlockPosition=3;
+
+        fi
+	echo $diagonalBlockPosition
+}
+
+
 function playGame(){
 	while [ $noOneWins ]
 	do
@@ -281,7 +385,8 @@ function playGame(){
 			if [ ${#allPositions[@]} -lt $BOARD_SIZE ]
                         then
                                 isplayerTurn=0
-                        else
+                        elif [ ${#allPositions[@]} -ge $BOARD_SIZE -a $noOneWins = "false" ]
+			then
                                 echo "matchDraw"
                                 isplayerTurn=2
                                 break
@@ -290,6 +395,10 @@ function playGame(){
 			local isValidPosition=true;
 			echo "computer's turn"
 			doPositionMet
+			 echo "##################"
+			blockColumn
+			blockdiagonal
+			echo "##################"
 			echo $columnPositionCounter
 			if [ $columnPositionCounter -eq $(($NO_OF_ROW_COLUMNS-1)) -a ${ticTacToeBoard[$checkColumnPosition]} = '-' ]
 			then
@@ -297,6 +406,16 @@ function playGame(){
 			elif [ $rowPositionCounter = $(($NO_OF_ROW_COLUMNS-1)) -a ${ticTacToeBoard[$checkRowPosition]} = '-' ]
 			then
 				position=$checkRowPosition
+                         elif [ $diagonalBlockPosition != 0 ]
+                         then
+                                 position=$diagonalBlockPosition
+			elif [ $columnBlockPosition != 0 ]
+                         then
+                                 position=$columnBlockPosition
+			elif [ $rowBlockPosition != 0 ]
+                         then
+                                 position=$rowBlockPosition
+
 			else
 #				read -p "enter computer spot " position
 				position=$(( RANDOM % $BOARD_SIZE +1))
@@ -318,7 +437,8 @@ function playGame(){
 			if [ ${#allPositions[@]} -lt $BOARD_SIZE ]
 			then
 				isplayerTurn=1
-			else
+			elif [ ${#allPositions[@]} -ge $BOARD_SIZE -a $noOneWins = "false" ]
+			then
 				echo "matchDraw"
 				isplayerTurn=2
 				break
