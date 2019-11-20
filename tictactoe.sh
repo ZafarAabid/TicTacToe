@@ -234,7 +234,6 @@ function checkValidPosition(){
 	echo $isValidPosition
 }
 function choosePosition(){
-
 	allow="$(checkValidPosition $position $positionSymbol )"
 	if [ $allow = true ]
 	then
@@ -321,39 +320,30 @@ function blockColumn(){
         fi
         echo $rowBlockPosition
 }
-###################
 function blockdiagonal() {
 	diagonalBlockPosition=0;
 	if [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[5]} = $player -a "${ticTacToeBoard[9]}" = "-" ]
 	then
 		diagonalBlockPosition=9;
-
 	elif [ ${ticTacToeBoard[1]} = $player -a ${ticTacToeBoard[9]} = $player -a "${ticTacToeBoard[5]}" = "-" ]
         then
                 diagonalBlockPosition=5;
-
 	elif [ ${ticTacToeBoard[5]} = $player -a ${ticTacToeBoard[9]} = $player  -a "${ticTacToeBoard[1]}" = "-" ]
         then 
                 diagonalBlockPosition=1;
-
 	fi
-
 	if [ ${ticTacToeBoard[3]} = $player -a ${ticTacToeBoard[5]} = $player  -a "${ticTacToeBoard[7]}" = "-" ]
         then 
                 diagonalBlockPosition=7;
         elif [ ${ticTacToeBoard[3]} = $player -a ${ticTacToeBoard[7]} = $player  -a "${ticTacToeBoard[5]}" = "-" ]
         then 
                 diagonalBlockPosition=5;
-
         elif [ ${ticTacToeBoard[5]} = $player -a ${ticTacToeBoard[7]} = $player  -a "${ticTacToeBoard[3]}" = "-" ]
         then 
                 diagonalBlockPosition=3;
-
         fi
 	echo $diagonalBlockPosition
 }
-
-
 function playGame(){
 	while [ $noOneWins ]
 	do
@@ -395,10 +385,8 @@ function playGame(){
 			local isValidPosition=true;
 			echo "computer's turn"
 			doPositionMet
-			 echo "##################"
 			blockColumn
 			blockdiagonal
-			echo "##################"
 			echo $columnPositionCounter
 			if [ $columnPositionCounter -eq $(($NO_OF_ROW_COLUMNS-1)) -a ${ticTacToeBoard[$checkColumnPosition]} = '-' ]
 			then
@@ -415,7 +403,6 @@ function playGame(){
 			elif [ $rowBlockPosition != 0 ]
                          then
                                  position=$rowBlockPosition
-
 			else
 #				read -p "enter computer spot " position
 				position=$(( RANDOM % $BOARD_SIZE +1))
