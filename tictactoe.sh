@@ -139,7 +139,7 @@ local selectCell=0
 	while [ $selectCell -lt $BOARD_SIZE ]
 	do
 		selectCell=$(($selectCell+$(($NO_OF_ROW_COLUMNS-1)) ))
-		if [ ${ticTacToeBoard[$selectCell]} = "-" ]
+		if [ "${ticTacToeBoard[$selectCell]}" = "-" ]
 		then
 			chooseSide=$selectCell
 		fi
@@ -415,7 +415,14 @@ function playGame(){
 			blockRow
 			blockdiagonal
 			chooseSide="$(chooseSides)"
-                         if [ $diagonalBlockPosition != "0" ]
+
+			if [ $columnPositionCounter -eq $(($NO_OF_ROW_COLUMNS-1)) -a ${ticTacToeBoard[$checkColumnPosition]} = '-' ]
+			then
+				position=$checkColumnPosition
+			elif [ $rowPositionCounter = $(($NO_OF_ROW_COLUMNS-1)) -a ${ticTacToeBoard[$checkRowPosition]} = '-' ]
+			then
+				position=$checkRowPosition
+                        elif [ $diagonalBlockPosition != "0" ]
                          then
                                  position=$diagonalBlockPosition
 			elif [ $columnBlockPosition != "0" ]
